@@ -1,0 +1,81 @@
+:root {
+	--main-color : orange;
+	--main-color-bg : #1e1e1e ;
+	--main-color :  #af7ac5 
+}
+
+.comment {
+	color: #6a9955;
+	white-space: pre;
+	font-family: 'Droid Sans Mono', 'monospace', monospace;
+}
+
+.output-visible {
+	border-radius: 25px;
+	border: 4px solid var(--main-color);
+	background-color: var(--main-color-bg);
+	padding: 40px;
+	font-family: 'Droid Sans Mono', 'monospace', monospace;
+	/* width: 200px;
+	height: 150px */
+}
+
+.output-invisible{
+	display: none;
+}
+
+.copyLine {
+	white-space: pre;	
+	font-family: 'Droid Sans Mono', 'monospace', monospace;
+	color: white;
+}
+
+body {
+	background-color: var(--main-color-bg);
+	color: white;
+}
+
+h1 {
+	color: var(--main-color);
+	/* color: red; */
+}
+
+.button {
+	background-color: var(--main-color-bg);
+	border: 4px solid var(--main-color);
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	border-radius: 25px;
+	/* text-decoration: none; */
+	/* display: inline-block; */
+	font-size: 16px;
+}
+
+.button:hover {
+	background-color: var(--main-color);
+}
+
+
+label {
+	background-color: var(--main-color-bg);
+	border: 4px solid var(--main-color);
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	border-radius: 25px;
+	/* text-decoration: none; */
+	/* display: inline-block; */
+	font-size: 16px;
+}
+label:hover {
+	background-color: var(--main-color);
+}
+
+input[type='text']{
+	background-color: var(--main-color-bg);
+	border: 2px solid var(--main-color);
+	font-size: large;
+	color:white
+}
+
