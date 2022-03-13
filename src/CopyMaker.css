@@ -16,8 +16,6 @@
 	background-color: var(--main-color-bg);
 	padding: 40px;
 	font-family: 'Droid Sans Mono', 'monospace', monospace;
-	/* width: 200px;
-	height: 150px */
 }
 
 .output-invisible{
@@ -37,7 +35,6 @@ body {
 
 h1 {
 	color: var(--main-color);
-	/* color: red; */
 }
 
 .button {
@@ -47,8 +44,6 @@ h1 {
 	padding: 15px 32px;
 	text-align: center;
 	border-radius: 25px;
-	/* text-decoration: none; */
-	/* display: inline-block; */
 	font-size: 16px;
 }
 
@@ -64,8 +59,6 @@ label {
 	padding: 15px 32px;
 	text-align: center;
 	border-radius: 25px;
-	/* text-decoration: none; */
-	/* display: inline-block; */
 	font-size: 16px;
 }
 label:hover {
