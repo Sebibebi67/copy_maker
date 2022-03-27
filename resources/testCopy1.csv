@@ -1,25 +1,24 @@
-05;Data1;PIC (09);Ceci est une description
-05;Data2;PIC (09);Ceci est une description
-05;Data3;PIC (09);Ceci est une description
-10;Data4;PIC (09);Ceci est une description
-88;Data5;PIC (09);Ceci est une description
-88;Data6;PIC (09);Ceci est une description
-15;Data7;PIC (09);Ceci est une description
-10;Data8;PIC (09);Ceci est une description
-05;Data9;PIC (09);Ceci est une description
-05;Data10;PIC (09);Ceci est une description
-05;Data11;PIC (09);Ceci est une description
-05;Data12;;Ceci est une description
-10;Data13;PIC (09);
-10;Data14;PIC (09);Ceci est une description
-15;Data15;PIC (09);Ceci est une description
-20;Data16;PIC (09);Ceci est une description
-88;Data17;PIC (09);Ceci est une description
-88;Data18;PIC (09);Ceci est une description
-88;Data19;PIC (09);Ceci est une description
-20;Data20;PIC (09);Ceci est une description
-15;Data21;PIC (09);Ceci est une description
-10;Data22;PIC (09);Ceci est une description
-10;Data23;PIC (09);Ceci est une description
-10;   ; PIX X (09);FILLER
-10 ;  FILLER ; PIC X(50);éà
+05;Data1;Ceci est une description;PIC X(09)
+05;Data2;Ceci est une description;PIC X(09)
+05;Data3;Ceci est une description;PIC X(09)
+10;Data4;Ceci est une description;PIC X(09)
+88;Data5;Ceci est une description;PIC X(09)
+88;Data6;Ceci est une description;PIC X(09)
+15;Data7;Ceci est une description;PIC X(09)
+10;Data8;Ceci est une description;PIC X(09)
+05;Data9;Ceci est une description;PIC X(09)
+05;Data10;Ceci est une description;PIC X(09)
+05;Data11;Ceci est une description;PIC X(09)
+05;Data12;Ceci est une description;PIC X(09)
+10;Data13;;PIC X(09)
+10;Data14;Ceci est une description;PIC X(09)
+15;Data15;Ceci est une description;PIC X(09)
+20;Data16;Ceci est une description;PIC X(09)
+88;Data17;Ceci est une description;PIC X(09)
+88;Data18;Ceci est une description;PIC X(09)
+20;Data20;Ceci est une description;PIC X(09)
+15;Data21;Ceci est une description;PIC X(09)
+10;Data22;Ceci est une description;PIC X(09)
+10;Data23;Ceci est une description;PIC X(09)
+10;   FILLER;;PIC X(09)
+10 ;  FILLER ;éà;PIC X(09)

@@ -14,8 +14,8 @@ LEVEL;PARAMETER-NAME;TYPE;DESCRITPION
 ```
 or
 ```CSV
-05;DATA1;PIC X(10);This is a description
-05;DATA2;PIC 9(05);This is another description
+05;DATA1;This is a description;PIC X(10)
+05;DATA2;This is another description;PIC 9(05)
 ```
 
 NB : More examples are available [here](resources/testCopy1.csv) and [here](resources/testCopy2.csv).

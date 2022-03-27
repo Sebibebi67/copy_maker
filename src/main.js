@@ -289,8 +289,8 @@ class FileCopy {
 			var line = new Line(
 				parameters[0]?.trim(),
 				displayName,
-				parameters[2]?.trim(),
 				parameters[3]?.trim(),
+				parameters[2]?.trim(),
 				this.previousIndent);
 			
 			// Preventing indentation after reading a level 88 or 77
