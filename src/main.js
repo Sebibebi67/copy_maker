@@ -353,11 +353,13 @@ class FileCopy {
 							   + this.length;
 
 		var firstLine = document.createElement("span");
-		firstLine.className = 'comment';
-		firstLine.textContent = commentedMargin
+		firstLine.className = 'CopyLine';
+		firstLine.textContent = margin
 							  + '01'
 							  + space
-							  + this.copyNameAsParameter;
+							  + space
+							  + this.copyNameAsParameter
+							  + point;
 
 		var commentedLine2 = document.createElement("span");
 		commentedLine2.className = 'comment';
