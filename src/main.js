@@ -53,6 +53,8 @@ const tab = '    ';
 const space = ' '; 
 const point = '.';
 
+const FILLER = 'FILLER';
+const ENCODING = 'UTF-8';
 // 
 //--------------------------------------------------------------------------------//
 
@@ -179,7 +181,7 @@ function parseFile(){
 		}
 		displayOutput();	
 	}
-	reader.readAsText(csvFile.files[0]);
+	reader.readAsText(csvFile.files[0], ENCODING);
 }
 
 /**
@@ -276,10 +278,17 @@ class FileCopy {
 		var parameters = lineAsString.split(parser);
 		console.log(parameters);
 		if (parameters.length > 1){
-			// Creating a new Line
+			var displayName = "";
+			if (parameters[1]?.trim() == "" || parameters[1]?.trim() == FILLER){
+				displayName = FILLER;
+			}else{
+				displayName = this.copyNameAsParameter + '-' + parameters[1]?.trim();
+			}
+
+			// Creating a new Line		
 			var line = new Line(
 				parameters[0]?.trim(),
-				this.copyNameAsParameter + '-' + parameters[1]?.trim(),
+				displayName,
 				parameters[2]?.trim(),
 				parameters[3]?.trim(),
 				this.previousIndent);
@@ -473,8 +482,11 @@ class Line {
 								+ this.type
 								+ point;
 
-		smallDiv.appendChild(lineDescription);
-		smallDiv.appendChild(document.createElement("br"));
+		// On en la ajouter la description que si elle est non vide
+		if (this.description != ''){
+			smallDiv.appendChild(lineDescription);
+			smallDiv.appendChild(document.createElement("br"));
+		}
 		smallDiv.appendChild(lineContent);
 
 		return smallDiv;
@@ -523,8 +535,11 @@ class Line {
 	 * - Sébastien HERT
 	 */
 	getSpaces(){
+		if (this.type == ''){
+			return '';
+		}
 		var spaces = ''
-		var length = 56
+		var length = 52
 				   - margin.length
 				   - this.indent.length
 				   - this.level.length

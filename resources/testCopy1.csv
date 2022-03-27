@@ -9,8 +9,8 @@
 05;Data9;PIC (09);Ceci est une description
 05;Data10;PIC (09);Ceci est une description
 05;Data11;PIC (09);Ceci est une description
-05;Data12;PIC (09);Ceci est une description
-10;Data13;PIC (09);Ceci est une description
+05;Data12;;Ceci est une description
+10;Data13;PIC (09);
 10;Data14;PIC (09);Ceci est une description
 15;Data15;PIC (09);Ceci est une description
 20;Data16;PIC (09);Ceci est une description
@@ -21,3 +21,5 @@
 15;Data21;PIC (09);Ceci est une description
 10;Data22;PIC (09);Ceci est une description
 10;Data23;PIC (09);Ceci est une description
+10;   ; PIX X (09);FILLER
+10 ;  FILLER ; PIC X(50);éà
