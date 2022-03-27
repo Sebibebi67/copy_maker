@@ -38,6 +38,7 @@ var copyName;
 //
 const regexFile = /^([a-zA-Z0-9\s_\\.\-:])+(.csv)$/;
 const regexData = /^\:[a-zA-Z0-9]{6}\:\-/;
+const regexType = /^[S]?[X9]+\([0-9]*\)/;
 const parser = ';';
 
 const border = ' ============================================================== *';
@@ -56,6 +57,7 @@ const point = '.';
 
 const FILLER = 'FILLER';
 const ENCODING = 'UTF-8';
+const PIC = 'PIC';
 // 
 //--------------------------------------------------------------------------------//
 
@@ -290,7 +292,7 @@ class FileCopy {
 			var line = new Line(
 				parameters[0]?.trim(),
 				displayName,
-				parameters[3]?.trim(),
+				this.cleanType(parameters[3]),
 				parameters[2]?.trim(),
 				this.previousIndent);
 			
@@ -421,6 +423,18 @@ class FileCopy {
 	}
 
 
+	/**
+	 * Description : Cleans the data input field
+	 *
+	 * Input :
+	 * - data : the data field as a String
+	 *
+	 * Output :
+	 * - CleanedDta : the cleaned data field as a String
+	 *
+	 * Authors :
+	 * - Sébastien HERT
+	 */
 	cleanData(data){
 
 		// if our data isn't a String -> let's do nothing
@@ -429,14 +443,41 @@ class FileCopy {
 		// Let's trim our data
 		var cleanedData = data.trim();
 
-	    console.log(cleanedData);
+	    // console.log(cleanedData);
 		// And remove all potential ':xxxxxx:-'
 		if (regexData.test(cleanedData)){
-			console.log('cleaning');
 			cleanedData = cleanedData.replace(regexData, '');
 		}
 
 		return cleanedData;
+	}
+
+	/**
+	 * Description : Cleans the type input field
+	 *
+	 * Input :
+	 * - data : the type field as a String
+	 *
+	 * Output :
+	 * - CleanedDta : the cleaned type field as a String
+	 *
+	 * Authors :
+	 * - Sébastien HERT
+	 */
+	cleanType(type){
+		if (!type === String){
+			return '';
+		}
+
+		// Let's trim our type
+		var cleanedType = type.trim();
+
+		// if the type doesn't contain 'PIC' and needs it
+		if (regexType.test(cleanedType)){
+			cleanedType = PIC + space + cleanedType;
+		}
+		return cleanedType;
+
 	}
 }
 

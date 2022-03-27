@@ -22,4 +22,6 @@
 10;Data23;Ceci est une description;PIC X(09)
 10;   FILLER;;PIC X(09)
 10 ;  FILLER ;éà;PIC X(09)
-10;:abcdef:-DataXXX;description;PIC X(09)
+10;:abcdef:-DataXXX;description;X(09)
+10;:abcdef:-DataXXX;description;9(09)
+10;:abcdef:-DataXXX;description;S9(09)
