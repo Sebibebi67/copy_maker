@@ -36,7 +36,8 @@ var copyName;
 
 //------------------------------- Global Constants -------------------------------//
 //
-const regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv)$/;
+const regexFile = /^([a-zA-Z0-9\s_\\.\-:])+(.csv)$/;
+const regexData = /^\:[a-zA-Z0-9]{6}\:\-/;
 const parser = ';';
 
 const border = ' ============================================================== *';
@@ -147,7 +148,7 @@ function copyToClipboard(){
  * - Sébastien HERT
  */
 function checkFile() {
-	if (!regex.test(csvFile.value.toLowerCase())){
+	if (!regexFile.test(csvFile.value.toLowerCase())){
 		displayError(errorCSV);
 	}
 
@@ -276,13 +277,13 @@ class FileCopy {
 	addLine (lineAsString) {
 		// Parsing the line
 		var parameters = lineAsString.split(parser);
-		console.log(parameters);
+		// console.log(parameters);
 		if (parameters.length > 1){
 			var displayName = "";
 			if (parameters[1]?.trim() == "" || parameters[1]?.trim() == FILLER){
 				displayName = FILLER;
 			}else{
-				displayName = this.copyNameAsParameter + '-' + parameters[1]?.trim();
+				displayName = this.copyNameAsParameter + '-' + this.cleanData(parameters[1]);
 			}
 
 			// Creating a new Line		
@@ -417,6 +418,25 @@ class FileCopy {
 		
 		today = dd + '/' + mm + '/' + yyyy;
 		return today;
+	}
+
+
+	cleanData(data){
+
+		// if our data isn't a String -> let's do nothing
+		if (!data === String){ return ''; }
+
+		// Let's trim our data
+		var cleanedData = data.trim();
+
+	    console.log(cleanedData);
+		// And remove all potential ':xxxxxx:-'
+		if (regexData.test(cleanedData)){
+			console.log('cleaning');
+			cleanedData = cleanedData.replace(regexData, '');
+		}
+
+		return cleanedData;
 	}
 }
 
