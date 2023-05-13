@@ -1,7 +1,6 @@
 :root {
-	--main-color : orange;
+	--main-color : silver;
 	--main-color-bg : #1e1e1e ;
-	--main-color :  #af7ac5 
 }
 
 .comment {
@@ -13,8 +12,8 @@
 .output-visible {
 	border-radius: 25px;
 	border: 4px solid var(--main-color);
+	padding: 10px 10px;
 	background-color: var(--main-color-bg);
-	padding: 40px;
 	font-family: 'Droid Sans Mono', 'monospace', monospace;
 }
 
@@ -39,12 +38,11 @@ h1 {
 
 .button {
 	background-color: var(--main-color-bg);
-	border: 4px solid var(--main-color);
-	color: white;
-	padding: 15px 32px;
+	border: 1px solid var(--main-color);
 	text-align: center;
 	border-radius: 25px;
-	font-size: 16px;
+	font-size: large;
+	/* padding: 4px 4px; */
 }
 
 .button:hover {
@@ -52,23 +50,34 @@ h1 {
 }
 
 
-label {
+label.button {
 	background-color: var(--main-color-bg);
-	border: 4px solid var(--main-color);
-	color: white;
-	padding: 15px 32px;
+	border: 1px solid var(--main-color);
+	font-size: large;
+	padding: 1px 1px;
 	text-align: center;
 	border-radius: 25px;
-	font-size: 16px;
 }
-label:hover {
+label.button:hover {
 	background-color: var(--main-color);
 }
 
 input[type='text']{
 	background-color: var(--main-color-bg);
-	border: 2px solid var(--main-color);
+	width: 100px;
 	font-size: large;
-	color:white
 }
+
+select{
+	background-color: var(--main-color-bg);
+	width: 100px;
+	font-size: large;
+}
+
+table td, table td * {
+    vertical-align: top;
+	font-size: large;
+	border-spacing: 10px;
+}
+
 

@@ -30,6 +30,8 @@ var processOk = true;
 var outputDivision;
 var copy;
 var copyName;
+var typeColumnIndex;
+var increment;
 // 
 //--------------------------------------------------------------------------------//
 
@@ -51,9 +53,9 @@ const cLength		= 'Longueur    : ';
 
 const margin = '       ';
 const commentedMargin = '      *';
-const tab = '    ';
 const space = ' '; 
 const point = '.';
+const newLine = "\n";
 
 const FILLER = 'FILLER';
 const ENCODING = 'UTF-8';
@@ -97,6 +99,12 @@ function generateCopy() {
 
 	// Getting the copy Name
 	copyName = document.getElementById("CopyName").value;
+
+	// Getting the index of the Type column
+	typeColumnIndex = document.getElementById("TypeColumnIndex").value;
+
+	// Getting the length of the increment
+	increment = document.getElementById("IncrementValue").value;
 
 	copy = new FileCopy(copyName);
 
@@ -176,7 +184,7 @@ function parseFile(){
 
 	reader.onload = function(e){
 		var content = reader.result;
-		var lines = content.split('\n');
+		var lines = content.split(newLine);
 
 		// For each line
 		for (var count = 0; count < lines.length; count++) {
@@ -253,7 +261,7 @@ class FileCopy {
 
 //--------------------------------- Constructor ----------------------------------//
 
-	constructor(copyName){
+	constructor(coryName){
 		if (copyName.length == 7){
 			this.copyName = copyName.toUpperCase();
 		}
@@ -292,8 +300,8 @@ class FileCopy {
 			var line = new Line(
 				parameters[0]?.trim(),
 				displayName,
-				this.cleanType(parameters[3]),
-				parameters[2]?.trim(),
+				this.cleanType(parameters[2]),
+				this.cleanDescription(parameters[3]),
 				this.previousIndent);
 			
 			// Preventing indentation after reading a level 88 or 77
@@ -331,36 +339,42 @@ class FileCopy {
 		var copyNameLine = document.createElement("span");
 		copyNameLine.className = 'comment';
 		copyNameLine.textContent = commentedMargin
+								 + space
 								 + cName
 								 + this.copyName;
 
 		var versionLine = document.createElement("span");
 		versionLine.className = 'comment';
 		versionLine.textContent = commentedMargin
+								+ space
 								+ cVersion
 								+ this.version;	
 
 		var descriptionLine = document.createElement("span");
 		descriptionLine.className = 'comment';
 		descriptionLine.textContent = commentedMargin
+									+ space
 									+ cDescription
 									+ this.description;
 
 		var dateLine = document.createElement("span");
 		dateLine.className = 'comment';
 		dateLine.textContent = commentedMargin
+							 + space	
 							 + cDate
 							 + this.date;
 
 		var authorLine = document.createElement("span");
 		authorLine.className = 'comment';
 		authorLine.textContent = commentedMargin
+							   + space
 							   + cAuthor
 							   + this.author;
 
 		var lengthLine = document.createElement("span");
 		lengthLine.className = 'comment';
 		lengthLine.textContent = commentedMargin
+							   + space
 							   + cLength
 							   + this.length;
 
@@ -456,10 +470,10 @@ class FileCopy {
 	 * Description : Cleans the type input field
 	 *
 	 * Input :
-	 * - data : the type field as a String
+	 * - type : the type field as a String
 	 *
 	 * Output :
-	 * - CleanedDta : the cleaned type field as a String
+	 * - CleanedType : the cleaned type field as a String
 	 *
 	 * Authors :
 	 * - Sébastien HERT
@@ -470,14 +484,37 @@ class FileCopy {
 		}
 
 		// Let's trim our type
-		var cleanedType = type.trim();
+		var cleanedType = type.replace(".", "").trim();
 
 		// if the type doesn't contain 'PIC' and needs it
 		if (regexType.test(cleanedType)){
 			cleanedType = PIC + space + cleanedType;
 		}
 		return cleanedType;
+	}
 
+	/**
+	 * Description : Cleans the description input field
+	 *
+	 * Input :
+	 * - description
+	 *
+	 * Output :
+	 * - CleanedDescription
+	 *
+	 * Authors :
+	 * - Sébastien HERT
+	 */
+	cleanDescription(description){
+		if (!description === String){
+			return '';
+		}
+
+		// Removing unnecessary spaces
+		var cleanedDescription = description.trim();
+		cleanedDescription = cleanedDescription.replace(/\s\s+/g, ' ');
+
+		return cleanedDescription;
 	}
 }
 
@@ -526,10 +563,28 @@ class Line {
 	generateLine(){
 		var smallDiv = document.createElement("div")
 		var lineDescription = document.createElement("span");
-		lineDescription.className = 'comment';
-		lineDescription.textContent = commentedMargin
-									+ this.indent
-									+ this.description;
+		lineDescription.className = 'comment'; 
+		var words = this.description.split(space);
+		var descriptionLines = [];
+		descriptionLines.push(this.indent);
+		words.forEach(word => {
+			if (descriptionLines[descriptionLines.length - 1].length + word.length +1 <= 65){
+				descriptionLines[descriptionLines.length - 1] += word + space;
+			}
+			else {
+				descriptionLines[descriptionLines.length - 1] += newLine;
+				descriptionLines.push(increment + word + space);
+			}
+		});
+
+		descriptionLines.forEach(line => {
+			lineDescription.textContent += commentedMargin
+										 + line
+		});
+ 
+		// lineDescription.textContent = commentedMargin
+		// 							+ this.indent
+		// 							+ this.description;
 
 
 		var lineContent = document.createElement("span");
@@ -568,16 +623,16 @@ class Line {
 	getIndent(){
 		switch (this.level) {
 			case '05':
-				return tab
+				return increment
 			case '10':
-				return tab + tab 
+				return increment + increment 
 			case '15':
-				return tab + tab + tab
+				return increment + increment + increment
 			case '20':
-				return tab + tab + tab + tab
+				return increment + increment + increment + increment
 			case '77':
 			case '88':
-				return this.previousIndent + tab;
+				return this.previousIndent + increment;
 			default:
 				return '';
 		}
@@ -599,16 +654,32 @@ class Line {
 		if (this.type == ''){
 			return '';
 		}
+ 
+
 		var spaces = ''
-		var length = 52
-				   - margin.length
-				   - this.indent.length
-				   - this.level.length
-				   - 1
-				   - this.name.length;
-		for (let index = 0; index < length; index++) {
-			spaces = spaces + space;			
+		var currentLineLength = margin.length	
+							  + this.indent.length
+							  + this.level.length
+							  + 1
+							  + this.name.length;
+
+
+		var length = typeColumnIndex - 1 - currentLineLength;
+		console.log("typeColumnIndex : " + typeColumnIndex);
+		console.log("length : " + length);
+
+		if (length > 0){
+			for (let index = 0; index < length; index++) {
+				spaces = spaces + space;			
+			}
 		}
+		else {
+			spaces += newLine;
+			for (let index = 0; index < typeColumnIndex - 1; index++) {
+				spaces = spaces + space;			
+			}
+		}
+
 		return spaces;
 	}
 }

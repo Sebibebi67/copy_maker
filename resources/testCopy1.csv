@@ -1,27 +1,29 @@
-05;Data1;Ceci est une description;PIC X(09)
-05;Data2;Ceci est une description;PIC X(09)
-05;Data3;Ceci est une description;PIC X(09)
-10;Data4;Ceci est une description;PIC X(09)
-88;Data5;Ceci est une description;PIC X(09)
-88;Data6;Ceci est une description;PIC X(09)
-15;Data7;Ceci est une description;PIC X(09)
-10;Data8;Ceci est une description;PIC X(09)
-05;Data9;Ceci est une description;PIC X(09)
-05;Data10;Ceci est une description;PIC X(09)
-05;Data11;Ceci est une description;PIC X(09)
-05;Data12;Ceci est une description;PIC X(09)
-10;Data13;;PIC X(09)
-10;Data14;Ceci est une description;PIC X(09)
-15;Data15;Ceci est une description;PIC X(09)
-20;Data16;Ceci est une description;PIC X(09)
-88;Data17;Ceci est une description;PIC X(09)
-88;Data18;Ceci est une description;PIC X(09)
-20;Data20;Ceci est une description;PIC X(09)
-15;Data21;Ceci est une description;PIC X(09)
-10;Data22;Ceci est une description;PIC X(09)
-10;Data23;Ceci est une description;PIC X(09)
-10;   FILLER;;PIC X(09)
-10 ;  FILLER ;éà;PIC X(09)
-10;:abcdef:-DataXXX;description;X(09)
-10;:abcdef:-DataXXX;description;9(09)
-10;:abcdef:-DataXXX;description;S9(09)
+05;Data1;PIC X(09).;Ceci est une description;
+05;Data2;PIC X(09);Ceci est une description BEACOUP BEAUCOUP BEAUCOUP BEAUCOUP BEAUCOUP BEAUCOU trop longue;
+05;Data3;PIC X(09);Ceci est une description;
+10;Data4;PIC X(09);Ceci est autre une description BEACOUP BEAUCOUP BEAUCOUP BEAUCOUP BEAUCOUP BEAUCOU trop longue;
+88;Data5;PIC X(09);Ceci est une description;
+88;Data6;PIC X(09);Ceci est autre une description BEACOUP BEAUCOUP BEAUCOUP BEAUCOUP BEAUCOUP BEAUCOU trop longue;
+15;Data7;PIC X(09);Ceci est une description;
+10;Data8;PIC X(09);Ceci est une description;
+05;Data9;PIC X(09);Ceci est une description;
+05;Data10;PIC X(09);Ceci est une description;
+05;Data11;PIC X(09);Ceci est une description;
+05;Data12;PIC X(09);Ceci est une description;
+10;Data13;PIC X(09);
+10;Data14;PIC X(09);Ceci est une description
+15;Data15;PIC X(09);Ceci est une description
+20;Data16;PIC X(09);Ceci est une description
+88;Data17;PIC X(09);Ceci est une description
+88;Data18;PIC X(09);Ceci est une description
+20;Data20;PIC X(09);Ceci est une description
+15;Data21;PIC X(09);Ceci est une description
+10;Data22;PIC X(09);Ceci est une description
+10;Data23-xxx-xxx-xxx-xxx-xxx-XXX;PIC X(09);Ceci est une description
+10;   FILLER;PIC X(09);
+10 ;  FILLER ;PIC X(09);
+10;:abcdef:-DataXXX;X(09);description
+10;:abcdef:-DataXXX;9(09);description
+10;:abcdef:-DataXXX;S9(09);description
+05;TAB;OCCURS 20;Tableau
+10;TAB1;X(5);              VALEUR1
