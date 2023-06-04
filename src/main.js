@@ -32,6 +32,7 @@ var copy;
 var copyName;
 var typeColumnIndex;
 var increment;
+var isMessage;
 // 
 //--------------------------------------------------------------------------------//
 
@@ -41,19 +42,36 @@ var increment;
 const regexFile = /^([a-zA-Z0-9\s_\\.\-:])+(.csv)$/;
 const regexData = /^\:[a-zA-Z0-9]{6}\:\-/;
 const regexType = /^[S]?[X9]+\([0-9]*\)/;
+const regexTypeString = /^\s*PIC\s*X+\([0-9]*\)/;
+const regexTypeInteger = /^\s*PIC\s*9+\([0-9]*\)/;
 const parser = ';';
 
 const border = ' ============================================================== *';
-const cName    		= 'Nom de Copy : ';
-const cVersion 		= 'Version     : ';
-const cDescription 	= 'Description : ';
-const cDate			= 'Date        : ';
-const cAuthor		= 'Auteur      : ';
-const cLength		= 'Longueur    : ';
+const messageBorder = ' -------------------------------------------------------------- *';
+
+const cName = 'Nom de Copy : ';
+const cVersion = 'Version     : ';
+const cDescription = 'Description : ';
+const cDate = 'Date        : ';
+const cAuthor = 'Auteur      : ';
+const cLength = 'Longueur    : ';
+
+const messageHeader = 'En-tête généralisé pour toute copy de type message CM.';
+const messageData = 'Données métier';
+const messageFooter = 'Eye-catcher';
+const messageDescription = '[Dsc]';
+const messageConstant = '[Cst]';
+const messageType = '[Typ]';
+const messageIdt = '[MsgIdt]';
+const messageVersion = '[MsgVrs]';
+const messageLength = '[MsgLen]';
+const messageIdtEnd = '[MsgIdtEnd]';
+const messageString = 'String';
+const messageInteger = 'Integer';
 
 const margin = '       ';
 const commentedMargin = '      *';
-const space = ' '; 
+const space = ' ';
 const point = '.';
 const newLine = "\n";
 
@@ -70,8 +88,8 @@ const PIC = 'PIC';
 // this part contains the event Listener used to display the choosen file's name
 const actualBtn = document.getElementById('CopyCSV');
 const fileChosen = document.getElementById('chosenFile');
-actualBtn.addEventListener('change', function(){
-  fileChosen.textContent = this.files[0].name
+actualBtn.addEventListener('change', function () {
+	fileChosen.textContent = this.files[0].name
 })
 
 /**
@@ -106,13 +124,16 @@ function generateCopy() {
 	// Getting the length of the increment
 	increment = document.getElementById("IncrementValue").value;
 
+	// Is the copy a Message copy ?
+	isMessage = document.querySelector('input[name="Message"]:checked').value == "YES";
+
 	copy = new FileCopy(copyName);
 
 	// Checking fileName
 	checkFile();
 
 	// Parsing the file
-	if (processOk){ parseFile(); }
+	if (processOk) { parseFile(); }
 }
 
 /**
@@ -129,7 +150,7 @@ function generateCopy() {
  * Authors :
  * - Sébastien HERT
  */
-function copyToClipboard(){
+function copyToClipboard() {
 	var range = document.createRange();
 	range.selectNode(document.getElementById("output"));
 	window.getSelection().removeAllRanges(); // clear current selection
@@ -137,9 +158,6 @@ function copyToClipboard(){
 	document.execCommand("copy");
 	window.getSelection().removeAllRanges();
 }
-
-
-
 // 
 //--------------------------------------------------------------------------------//
 
@@ -158,7 +176,7 @@ function copyToClipboard(){
  * - Sébastien HERT
  */
 function checkFile() {
-	if (!regexFile.test(csvFile.value.toLowerCase())){
+	if (!regexFile.test(csvFile.value.toLowerCase())) {
 		displayError(errorCSV);
 	}
 
@@ -179,10 +197,10 @@ function checkFile() {
  * Authors :
  * - Sébastien HERT
  */
-function parseFile(){
+function parseFile() {
 	var reader = new FileReader();
 
-	reader.onload = function(e){
+	reader.onload = function (e) {
 		var content = reader.result;
 		var lines = content.split(newLine);
 
@@ -190,7 +208,7 @@ function parseFile(){
 		for (var count = 0; count < lines.length; count++) {
 			copy.addLine(lines[count]);
 		}
-		displayOutput();	
+		displayOutput();
 	}
 	reader.readAsText(csvFile.files[0], ENCODING);
 }
@@ -207,14 +225,19 @@ function parseFile(){
  * Authors :
  * - Sébastien HERT
  */
-function displayOutput(){
+function displayOutput() {
 	outputDivision.className = 'output-visible';
 	outputDivision.appendChild(copy.generateHeader());
-	outputDivision.appendChild(document.createElement("br"));
+	if (isMessage) {
+		outputDivision.appendChild(copy.generateHeaderMessage());
+	}
 	copy.lines.forEach(line => {
 		outputDivision.appendChild(line.generateLine());
 		outputDivision.appendChild(document.createElement("br"));
 	});
+	if (isMessage) {
+		outputDivision.appendChild(copy.generateFooterMessage());
+	}
 }
 
 /**
@@ -229,7 +252,7 @@ function displayOutput(){
  * Authors :
  * - Sébastien HERT
  */
-function displayError(error){
+function displayError(error) {
 	console.error(error);
 	processOk = false;
 }
@@ -259,18 +282,18 @@ class FileCopy {
 	lines = [];
 
 
-//--------------------------------- Constructor ----------------------------------//
+	//--------------------------------- Constructor ----------------------------------//
 
-	constructor(coryName){
-		if (copyName.length == 7){
+	constructor(coryName) {
+		if (copyName.length == 7) {
 			this.copyName = copyName.toUpperCase();
 		}
-		this.copyNameAsParameter = ':' + this.copyName.substring(1,7) + ':';
+		this.copyNameAsParameter = ':' + (isMessage ? this.copyName : this.copyName.substring(1, 7)) + ':';
 
 		this.date = this.getDate()
 	}
 
-//--------------------------------------------------------------------------------//
+	//--------------------------------------------------------------------------------//
 
 	/**
 	 * Description : Adds a line to the Copy
@@ -284,15 +307,14 @@ class FileCopy {
 	 * Authors :
 	 * - Sébastien HERT
 	 */
-	addLine (lineAsString) {
+	addLine(lineAsString) {
 		// Parsing the line
 		var parameters = lineAsString.split(parser);
-		// console.log(parameters);
-		if (parameters.length > 1){
+		if (parameters.length > 1) {
 			var displayName = "";
-			if (parameters[1]?.trim() == "" || parameters[1]?.trim() == FILLER){
+			if (parameters[1]?.trim() == "" || parameters[1]?.trim() == FILLER) {
 				displayName = FILLER;
-			}else{
+			} else {
 				displayName = this.copyNameAsParameter + '-' + this.cleanData(parameters[1]);
 			}
 
@@ -303,17 +325,15 @@ class FileCopy {
 				this.cleanType(parameters[2]),
 				this.cleanDescription(parameters[3]),
 				this.previousIndent);
-			
+
 			// Preventing indentation after reading a level 88 or 77
-			if (line.level != '88' && line.level != '77'){
+			if (line.level != '88' && line.level != '77') {
 				this.previousIndent = line.indent;
 			}
-	
+
 			// Adding the line to the list
 			this.lines.push(line);
 		}
-
-
 	}
 
 	/**
@@ -328,69 +348,69 @@ class FileCopy {
 	 * Authors :
 	 * - Sébastien HERT
 	 */
-	generateHeader(){
+	generateHeader() {
 		var header = document.createElement("div")
 
 		var commentedLine1 = document.createElement("span");
 		commentedLine1.className = 'comment';
 		commentedLine1.textContent = commentedMargin
-									+ border;
+			+ border;
 
 		var copyNameLine = document.createElement("span");
 		copyNameLine.className = 'comment';
 		copyNameLine.textContent = commentedMargin
-								 + space
-								 + cName
-								 + this.copyName;
+			+ space
+			+ cName
+			+ this.copyName;
 
 		var versionLine = document.createElement("span");
 		versionLine.className = 'comment';
 		versionLine.textContent = commentedMargin
-								+ space
-								+ cVersion
-								+ this.version;	
+			+ space
+			+ cVersion
+			+ this.version;
 
 		var descriptionLine = document.createElement("span");
 		descriptionLine.className = 'comment';
 		descriptionLine.textContent = commentedMargin
-									+ space
-									+ cDescription
-									+ this.description;
+			+ space
+			+ cDescription
+			+ this.description;
 
 		var dateLine = document.createElement("span");
 		dateLine.className = 'comment';
 		dateLine.textContent = commentedMargin
-							 + space	
-							 + cDate
-							 + this.date;
+			+ space
+			+ cDate
+			+ this.date;
 
 		var authorLine = document.createElement("span");
 		authorLine.className = 'comment';
 		authorLine.textContent = commentedMargin
-							   + space
-							   + cAuthor
-							   + this.author;
+			+ space
+			+ cAuthor
+			+ this.author;
 
 		var lengthLine = document.createElement("span");
 		lengthLine.className = 'comment';
 		lengthLine.textContent = commentedMargin
-							   + space
-							   + cLength
-							   + this.length;
+			+ space
+			+ cLength
+			+ this.length;
 
 		var firstLine = document.createElement("span");
 		firstLine.className = 'CopyLine';
 		firstLine.textContent = margin
-							  + '01'
-							  + space
-							  + space
-							  + this.copyNameAsParameter
-							  + point;
+			+ '01'
+			+ space
+			+ space
+			+ this.copyNameAsParameter
+			+ point;
 
 		var commentedLine2 = document.createElement("span");
 		commentedLine2.className = 'comment';
 		commentedLine2.textContent = commentedMargin
-									+ border;
+			+ border;
 
 		header.appendChild(commentedLine1);
 		header.appendChild(document.createElement("br"));
@@ -410,8 +430,324 @@ class FileCopy {
 		header.appendChild(document.createElement("br"));
 		header.appendChild(document.createElement("br"));
 		header.appendChild(firstLine);
-
+		if (!isMessage) {
+			header.appendChild(document.createElement("br"));
+			header.appendChild(document.createElement("br"));
+		}
 		return header;
+	}
+
+	/**
+	 * Description : Generates the message part of the copy's header
+	 *
+	 * Input :
+	 * - None
+	 *
+	 * Output :
+	 * - The HTML element which contains the header
+	 *
+	 * Authors :
+	 * - Sébastien HERT
+	 */
+	generateHeaderMessage() {
+		var header = document.createElement("div")
+
+		var commentedLine1 = document.createElement("span");
+		commentedLine1.className = 'comment';
+		commentedLine1.textContent = commentedMargin
+			+ messageBorder;
+		var commentedMessageHeader = document.createElement("span");
+		commentedMessageHeader.className = 'comment';
+		commentedMessageHeader.textContent = commentedMargin
+			+ space
+			+ messageHeader;
+		var commentedLine2 = document.createElement("span");
+		commentedLine2.className = 'comment';
+		commentedLine2.textContent = commentedMargin
+			+ messageBorder;
+
+		var messageHeaderLevel = document.createElement("span");
+		messageHeaderLevel.className = 'CopyLine';
+		messageHeaderLevel.textContent = margin
+			+ increment
+			+ "05"
+			+ point;
+
+		var messageIdDesc = document.createElement("span");
+		messageIdDesc.className = 'comment';
+		messageIdDesc.textContent = commentedMargin
+			+ messageDescription
+			+ "Indentifiant de cette description";
+		var messageIdCst = document.createElement("span");
+		messageIdCst.className = 'comment';
+		messageIdCst.textContent = commentedMargin
+			+ messageConstant;
+		var messageIdType = document.createElement("span");
+		messageIdType.className = 'comment';
+		messageIdType.textContent = commentedMargin
+			+ messageType
+			+ messageString;
+		var messageIdComplement = document.createElement("span");
+		messageIdComplement.className = 'comment';
+		messageIdComplement.textContent = commentedMargin
+			+ messageIdt;
+		var messageIdData = document.createElement("span");
+		messageIdData.className = 'CopyLine';
+		var tmpLine = margin + increment + increment + "10";
+		messageIdData.textContent = tmpLine
+			+ this.getSpacesHeader()
+			+ "PIC X(008) VALUE '"
+			+ copyName
+			+ space
+			+ "'."
+
+		var messageIdDesc = document.createElement("span");
+		messageIdDesc.className = 'comment';
+		messageIdDesc.textContent = commentedMargin
+			+ messageDescription
+			+ "Indentifiant de cette description";
+		var messageIdCst = document.createElement("span");
+		messageIdCst.className = 'comment';
+		messageIdCst.textContent = commentedMargin
+			+ messageConstant;
+		var messageIdType = document.createElement("span");
+		messageIdType.className = 'comment';
+		messageIdType.textContent = commentedMargin
+			+ messageType
+			+ messageString;
+		var messageIdComplement = document.createElement("span");
+		messageIdComplement.className = 'comment';
+		messageIdComplement.textContent = commentedMargin
+			+ messageIdt;
+		var messageIdData = document.createElement("span");
+		messageIdData.className = 'CopyLine';
+		var tmpLine = margin + increment + increment + "10";
+		messageIdData.textContent = tmpLine
+			+ this.getSpacesHeader()
+			+ "PIC X(008) VALUE '"
+			+ copyName
+			+ space
+			+ "'."
+
+		var messageVersionDesc = document.createElement("span");
+		messageVersionDesc.className = 'comment';
+		messageVersionDesc.textContent = commentedMargin
+			+ messageDescription
+			+ "Version courante de cette description";
+		var messageVersionCst = document.createElement("span");
+		messageVersionCst.className = 'comment';
+		messageVersionCst.textContent = commentedMargin
+			+ messageConstant;
+		var messageVersionType = document.createElement("span");
+		messageVersionType.className = 'comment';
+		messageVersionType.textContent = commentedMargin
+			+ messageType
+			+ messageString;
+		var messageVersionComplement = document.createElement("span");
+		messageVersionComplement.className = 'comment';
+		messageVersionComplement.textContent = commentedMargin
+			+ messageVersion;
+		var messageVersionData = document.createElement("span");
+		messageVersionData.className = 'CopyLine';
+		var tmpLine = margin + increment + increment + "10";
+		messageVersionData.textContent = tmpLine
+			+ this.getSpacesHeader()
+			+ "PIC X(003) VALUE '"
+			+ "001"
+			+ "'."
+
+		var messageLengthDesc = document.createElement("span");
+		messageLengthDesc.className = 'comment';
+		messageLengthDesc.textContent = commentedMargin
+			+ messageDescription
+			+ "Longueur effective de cette description";
+		var messageLengthCst = document.createElement("span");
+		messageLengthCst.className = 'comment';
+		messageLengthCst.textContent = commentedMargin
+			+ messageConstant;
+		var messageLengthType = document.createElement("span");
+		messageLengthType.className = 'comment';
+		messageLengthType.textContent = commentedMargin
+			+ messageType
+			+ messageString;
+		var messageLengthComplement = document.createElement("span");
+		messageLengthComplement.className = 'comment';
+		messageLengthComplement.textContent = commentedMargin
+			+ messageLength;
+		var messageLengthData = document.createElement("span");
+		messageLengthData.className = 'CopyLine';
+		var tmpLine = margin + increment + increment + "10";
+		messageLengthData.textContent = tmpLine
+			+ this.getSpacesHeader()
+			+ "PIC 9(005) VALUE "
+			+ "00100"
+			+ "."
+
+		var commentedLine3 = document.createElement("span");
+		commentedLine3.className = 'comment';
+		commentedLine3.textContent = commentedMargin
+			+ messageBorder;
+		var commentedMessageData = document.createElement("span");
+		commentedMessageData.className = 'comment';
+		commentedMessageData.textContent = commentedMargin
+			+ space
+			+ messageData;
+		var commentedLine4 = document.createElement("span");
+		commentedLine4.className = 'comment';
+		commentedLine4.textContent = commentedMargin
+			+ messageBorder;
+
+		header.appendChild(document.createElement("br"));
+		header.appendChild(commentedLine1);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(commentedMessageHeader);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(commentedLine2);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(messageHeaderLevel);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(document.createElement("br"));
+		header.appendChild(messageIdDesc);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(messageIdCst);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(messageIdType);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(messageIdComplement);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(messageIdData);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(document.createElement("br"));
+		header.appendChild(messageVersionDesc);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(messageVersionCst);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(messageVersionType);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(messageVersionComplement);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(messageVersionData);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(document.createElement("br"));
+		header.appendChild(messageLengthDesc);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(messageLengthCst);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(messageLengthType);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(messageLengthComplement);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(messageLengthData);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(document.createElement("br"));
+		header.appendChild(commentedLine3);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(commentedMessageData);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(commentedLine4);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(document.createElement("br"));
+		return header;
+	}
+
+	/**
+	 * Description : Generates the message part of the copy's footer
+	 *
+	 * Input :
+	 * - None
+	 *
+	 * Output :
+	 * - The HTML element which contains the footer
+	 *
+	 * Authors :
+	 * - Sébastien HERT
+	 */
+	generateFooterMessage() {
+		var footer = document.createElement("div")
+
+		var commentedLine1 = document.createElement("span");
+		commentedLine1.className = 'comment';
+		commentedLine1.textContent = commentedMargin
+			+ messageBorder;
+		var commentedMessageHeader = document.createElement("span");
+		commentedMessageHeader.className = 'comment';
+		commentedMessageHeader.textContent = commentedMargin
+			+ space
+			+ messageFooter;
+		var commentedLine2 = document.createElement("span");
+		commentedLine2.className = 'comment';
+		commentedLine2.textContent = commentedMargin
+			+ messageBorder;
+
+		var messageFooterDesc = document.createElement("span");
+		messageFooterDesc.className = 'comment';
+		messageFooterDesc.textContent = commentedMargin
+			+ messageDescription
+			+ "Eye-Catcher lié à cette description";
+		var messageFooterCst = document.createElement("span");
+		messageFooterCst.className = 'comment';
+		messageFooterCst.textContent = commentedMargin
+			+ messageConstant;
+		var messageFooterType = document.createElement("span");
+		messageFooterType.className = 'comment';
+		messageFooterType.textContent = commentedMargin
+			+ messageType
+			+ messageString;
+		var messageFooterComplement = document.createElement("span");
+		messageFooterComplement.className = 'comment';
+		messageFooterComplement.textContent = commentedMargin
+			+ messageIdtEnd;
+		var messageFooterData = document.createElement("span");
+		messageFooterData.className = 'CopyLine';
+		var tmpLine = margin + increment + increment + "10";
+		messageFooterData.textContent = tmpLine
+			+ this.getSpacesHeader()
+			+ "PIC X(008) VALUE '"
+			+ '/'
+			+ copyName
+			+ "'."
+
+		footer.appendChild(commentedLine1);
+		footer.appendChild(document.createElement("br"));
+		footer.appendChild(commentedMessageHeader);
+		footer.appendChild(document.createElement("br"));
+		footer.appendChild(commentedLine2);
+		footer.appendChild(document.createElement("br"));
+		footer.appendChild(document.createElement("br"));
+		footer.appendChild(messageFooterDesc);
+		footer.appendChild(document.createElement("br"));
+		footer.appendChild(messageFooterCst);
+		footer.appendChild(document.createElement("br"));
+		footer.appendChild(messageFooterType);
+		footer.appendChild(document.createElement("br"));
+		footer.appendChild(messageFooterComplement);
+		footer.appendChild(document.createElement("br"));
+		footer.appendChild(messageFooterData);
+		footer.appendChild(document.createElement("br"));
+		footer.appendChild(document.createElement("br"));
+
+		return footer;
+	}
+
+	/**
+	 * Description : Generate the spaces needed ton align the type in the 45th column in the header when generating message copy.
+	 *
+	 * Input :
+	 * - None
+	 *
+	 * Output :
+	 * - a string which contains the right number of spaces.
+	 *
+	 * Authors :
+	 * - Sébastien HERT
+	 */
+	getSpacesHeader() {
+		var nbSpaces = 45 - 2 * increment.length - margin.length - 3;
+		var spaces = '';
+		for (var i = 0; i < nbSpaces; i++) {
+			spaces += space;
+		}
+		return spaces;
 	}
 
 	/**
@@ -426,12 +762,12 @@ class FileCopy {
 	 * Authors :
 	 * - Sébastien HERT
 	 */
-	getDate(){
+	getDate() {
 		var today = new Date();
 		var dd = String(today.getDate()).padStart(2, '0');
 		var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
 		var yyyy = today.getFullYear();
-		
+
 		today = dd + '/' + mm + '/' + yyyy;
 		return today;
 	}
@@ -449,17 +785,16 @@ class FileCopy {
 	 * Authors :
 	 * - Sébastien HERT
 	 */
-	cleanData(data){
+	cleanData(data) {
 
 		// if our data isn't a String -> let's do nothing
-		if (!data === String){ return ''; }
+		if (!data === String) { return ''; }
 
 		// Let's trim our data
 		var cleanedData = data.trim();
 
-	    // console.log(cleanedData);
 		// And remove all potential ':xxxxxx:-'
-		if (regexData.test(cleanedData)){
+		if (regexData.test(cleanedData)) {
 			cleanedData = cleanedData.replace(regexData, '');
 		}
 
@@ -478,8 +813,8 @@ class FileCopy {
 	 * Authors :
 	 * - Sébastien HERT
 	 */
-	cleanType(type){
-		if (!type === String){
+	cleanType(type) {
+		if (!type === String) {
 			return '';
 		}
 
@@ -487,7 +822,7 @@ class FileCopy {
 		var cleanedType = type.replace(".", "").trim();
 
 		// if the type doesn't contain 'PIC' and needs it
-		if (regexType.test(cleanedType)){
+		if (regexType.test(cleanedType)) {
 			cleanedType = PIC + space + cleanedType;
 		}
 		return cleanedType;
@@ -505,8 +840,8 @@ class FileCopy {
 	 * Authors :
 	 * - Sébastien HERT
 	 */
-	cleanDescription(description){
-		if (!description === String){
+	cleanDescription(description) {
+		if (!description === String) {
 			return '';
 		}
 
@@ -533,11 +868,11 @@ class Line {
 	type;
 	description;
 	indent = '';
-	previousIndent= '';
+	previousIndent = '';
 
-//--------------------------------- Constructor ----------------------------------//
+	//--------------------------------- Constructor ----------------------------------//
 
-	constructor(level, name, type, description, previousIndent = ''){
+	constructor(level, name, type, description, previousIndent = '') {
 		this.level = level;
 		this.name = name;
 		this.type = type;
@@ -546,7 +881,7 @@ class Line {
 		this.indent += this.getIndent();
 	}
 
-//--------------------------------------------------------------------------------//
+	//--------------------------------------------------------------------------------//
 
 	/**
 	 * Description : Generates both description and data lines
@@ -560,47 +895,67 @@ class Line {
 	 * Authors :
 	 * - Sébastien HERT
 	 */
-	generateLine(){
+	generateLine() {
 		var smallDiv = document.createElement("div")
 		var lineDescription = document.createElement("span");
-		lineDescription.className = 'comment'; 
+		lineDescription.className = 'comment';
 		var words = this.description.split(space);
 		var descriptionLines = [];
-		descriptionLines.push(this.indent);
+		if (isMessage) {
+			descriptionLines.push(messageDescription);
+		} else {
+			descriptionLines.push(this.indent);
+		}
 		words.forEach(word => {
-			if (descriptionLines[descriptionLines.length - 1].length + word.length +1 <= 65){
+			if (descriptionLines[descriptionLines.length - 1].length + word.length + 1 <= 65) {
 				descriptionLines[descriptionLines.length - 1] += word + space;
 			}
 			else {
 				descriptionLines[descriptionLines.length - 1] += newLine;
-				descriptionLines.push(increment + word + space);
+				descriptionLines.push((isMessage ? '' : increment) + word + space);
 			}
 		});
 
 		descriptionLines.forEach(line => {
 			lineDescription.textContent += commentedMargin
-										 + line
+				+ line
 		});
- 
-		// lineDescription.textContent = commentedMargin
-		// 							+ this.indent
-		// 							+ this.description;
+
+		var typeDescription = document.createElement("span");
+		typeDescription.className = 'comment';
+		if (this.name == FILLER) {
+			typeDescription.textContent = '';
+		}
+		else if (regexTypeString.test(this.type)) {
+			typeDescription.textContent = commentedMargin + messageType + messageString;
+		} else if (regexTypeInteger.test(this.type)) {
+			typeDescription.textContent = commentedMargin + messageType + messageInteger;
+		} else {
+			typeDescription.textContent = '';
+		}
 
 
 		var lineContent = document.createElement("span");
 		lineContent.className = 'copyLine';
 		lineContent.textContent = margin
-								+ this.indent
-								+ this.level
-								+ space
-								+ this.name
-								+ this.getSpaces()
-								+ this.type
-								+ point;
+			+ this.indent
+			+ this.level
+			+ space
+			+ this.name
+			+ this.getSpaces()
+			+ this.type
+			+ point;
 
-		// On en la ajouter la description que si elle est non vide
-		if (this.description != ''){
+
+		// We add the description only if it's not empty
+		if (this.description != '') {
 			smallDiv.appendChild(lineDescription);
+			smallDiv.appendChild(document.createElement("br"));
+		}
+
+		// We add the type description its a message copy and if it's needed
+		if (isMessage && typeDescription.textContent != '') {
+			smallDiv.appendChild(typeDescription);
 			smallDiv.appendChild(document.createElement("br"));
 		}
 		smallDiv.appendChild(lineContent);
@@ -620,12 +975,12 @@ class Line {
 	 * Authors :
 	 * - Sébastien HERT
 	 */
-	getIndent(){
+	getIndent() {
 		switch (this.level) {
 			case '05':
 				return increment
 			case '10':
-				return increment + increment 
+				return increment + increment
 			case '15':
 				return increment + increment + increment
 			case '20':
@@ -650,33 +1005,31 @@ class Line {
 	 * Authors :
 	 * - Sébastien HERT
 	 */
-	getSpaces(){
-		if (this.type == ''){
+	getSpaces() {
+		if (this.type == '') {
 			return '';
 		}
- 
+
 
 		var spaces = ''
-		var currentLineLength = margin.length	
-							  + this.indent.length
-							  + this.level.length
-							  + 1
-							  + this.name.length;
+		var currentLineLength = margin.length
+			+ this.indent.length
+			+ this.level.length
+			+ 1
+			+ this.name.length;
 
 
 		var length = typeColumnIndex - 1 - currentLineLength;
-		console.log("typeColumnIndex : " + typeColumnIndex);
-		console.log("length : " + length);
 
-		if (length > 0){
+		if (length > 0) {
 			for (let index = 0; index < length; index++) {
-				spaces = spaces + space;			
+				spaces = spaces + space;
 			}
 		}
 		else {
 			spaces += newLine;
 			for (let index = 0; index < typeColumnIndex - 1; index++) {
-				spaces = spaces + space;			
+				spaces = spaces + space;
 			}
 		}
 

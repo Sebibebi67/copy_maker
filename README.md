@@ -2,7 +2,9 @@
 
 ## **Description**
 
-This is a small HTML page linked with a bit of javascript which allows you to generates a cobol Copy from a CSV File
+This is a small HTML page linked with a bit of javascript which allows you to generate a cobol Copy from a CSV File.
+
+**Important** : this script doesn't interpret your CSV and doesn't correct it. If your CSV is false, it will not detect it.
 
 ## **Installation**
 
@@ -18,7 +20,7 @@ or
 05;DATA2;PIC 9(05);This is another description
 ```
 
-NB : More examples are available [here](resources/testCopy1.csv) and [here](resources/testCopy2.csv).
+NB : More examples are available [here](resources/testCopy1.csv).
 
 NB2 : The CSV doesn't require any headers. Please make sure there is any in your file.
 
