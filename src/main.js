@@ -56,9 +56,17 @@ const cDate = 'Date        : ';
 const cAuthor = 'Auteur      : ';
 const cLength = 'Longueur    : ';
 
-const messageHeader = 'En-tête généralisé pour toute copy de type message CM.';
+const messageHeader1 = 'En-tête généralisé pour tout COPY de type MESSAGE          C14 *';
+const messageHeader2 = 'Comportant TAGs (ou BALISEs) standards/normalisés apposées via *';
+const messageHeader3 = 'commentaires standards à respecter                             *';
+const messageHeader4 = ' - [MsgIdt] : identification du message (=nom COPY associé)    *';
+const messageHeader5 = ' - [MsgVrs] : version en cours de la description de cette      *';
+const messageHeader6 = '               partie du message                               *';
+const messageHeader7 = ' - [MsgLen] : Longueur effective de cette description          *';
 const messageData = 'Données métier';
-const messageFooter = 'Eye-catcher';
+const messageFooter1 = 'Eye-Catcher - balise de fin de la description, permettant de   *';
+const messageFooter2 = '            vérifier à minima la cohérence du contenu porté.   *';
+const messageFooter3 = '            Si balise de fin présente et non altérée...        *';
 const messageDescription = '[Dsc]';
 const messageConstant = '[Cst]';
 const messageType = '[Typ]';
@@ -460,7 +468,31 @@ class FileCopy {
 		commentedMessageHeader.className = 'comment';
 		commentedMessageHeader.textContent = commentedMargin
 			+ space
-			+ messageHeader;
+			+ messageHeader1
+			+ newLine
+			+ commentedMargin
+			+ space
+			+ messageHeader2
+			+ newLine
+			+ commentedMargin
+			+ space
+			+ messageHeader3
+			+ newLine
+			+ commentedMargin
+			+ space
+			+ messageHeader4
+			+ newLine
+			+ commentedMargin
+			+ space
+			+ messageHeader5
+			+ newLine
+			+ commentedMargin
+			+ space
+			+ messageHeader6
+			+ newLine
+			+ commentedMargin
+			+ space
+			+ messageHeader7;
 		var commentedLine2 = document.createElement("span");
 		commentedLine2.className = 'comment';
 		commentedLine2.textContent = commentedMargin
@@ -673,7 +705,15 @@ class FileCopy {
 		commentedMessageHeader.className = 'comment';
 		commentedMessageHeader.textContent = commentedMargin
 			+ space
-			+ messageFooter;
+			+ messageFooter1
+			+ newLine
+			+ commentedMargin
+			+ space
+			+ messageFooter2
+			+ newLine
+			+ commentedMargin
+			+ space
+			+ messageFooter3;
 		var commentedLine2 = document.createElement("span");
 		commentedLine2.className = 'comment';
 		commentedLine2.textContent = commentedMargin
