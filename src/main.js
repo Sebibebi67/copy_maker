@@ -319,6 +319,10 @@ class FileCopy {
 		// Parsing the line
 		var parameters = lineAsString.split(parser);
 		if (parameters.length > 1) {
+			// the line is empty, let's do nothing
+			if (parameters[0] == "" && parameters[1] == "" && parameters[2] == "" && parameters[3] == ""){
+				return;
+			}
 			var displayName = "";
 			if (parameters[1]?.trim() == "" || parameters[1]?.trim() == FILLER) {
 				displayName = FILLER;
