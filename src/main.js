@@ -44,6 +44,8 @@ const regexData = /^\:[a-zA-Z0-9]{6}\:\-/;
 const regexType = /^[S]?[X9]+\([0-9]*\)/;
 const regexTypeString = /^\s*PIC\s*X+\([0-9]*\)/;
 const regexTypeInteger = /^\s*PIC\s*9+\([0-9]*\)/;
+const regexTypeRedefines = /^\s*REDIFINES\s*[a-zA-Z0-9:-]*/;
+const regexTypeRedefinesOrigin = /\:[a-zA-Z0-9]*\:\-/;
 const parser = ';';
 
 const border = ' ============================================================== *';
@@ -864,12 +866,20 @@ class FileCopy {
 
 		// Let's trim our type
 		var cleanedType = type.replace(".", "").trim();
+		cleanedType = cleanedType.replace(/\s+/, " ");
+		console.log(cleanedType);
 
 		// if the type doesn't contain 'PIC' and needs it
 		if (regexType.test(cleanedType)) {
 			cleanedType = PIC + space + cleanedType;
 		}
-		return cleanedType;
+
+		// if its a REDEFINES, lets format it
+		if (regexTypeRedefines.test(cleanedType)){
+			cleanedType = cleanedType.replace(regexTypeRedefinesOrigin, "");
+			cleanedType = cleanedType.replace(" ", space + this.copyNameAsParameter + "-");
+		}
+		return cleanedType; 
 	}
 
 	/**
@@ -1062,8 +1072,14 @@ class Line {
 			+ 1
 			+ this.name.length;
 
-
-		var length = typeColumnIndex - 1 - currentLineLength;
+		// if it's a REDIFINES, you will push it to the left
+		var length;
+		if (regexTypeRedefines.test(this.type)){
+			length = 41 - 1 - currentLineLength;
+		}
+		else{
+			length = typeColumnIndex - 1 - currentLineLength;
+		}
 
 		if (length > 0) {
 			for (let index = 0; index < length; index++) {
