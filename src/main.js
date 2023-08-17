@@ -211,7 +211,7 @@ function parseFile() {
 	var reader = new FileReader();
 
 	reader.onload = function (e) {
-		var content = reader.result;
+		var content = reader.result.replaceAll('', '\'');
 		var lines = content.split(newLine);
 
 		// For each line
