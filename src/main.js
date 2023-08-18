@@ -33,6 +33,7 @@ var copyName;
 var typeColumnIndex;
 var increment;
 var isMessage;
+var encoding;
 // 
 //--------------------------------------------------------------------------------//
 
@@ -86,7 +87,6 @@ const point = '.';
 const newLine = "\n";
 
 const FILLER = 'FILLER';
-const ENCODING = 'UTF-8';
 const PIC = 'PIC';
 // 
 //--------------------------------------------------------------------------------//
@@ -136,6 +136,9 @@ function generateCopy() {
 
 	// Is the copy a Message copy ?
 	isMessage = document.querySelector('input[name="Message"]:checked').value == "YES";
+
+	// Which encoding to use ?
+	encoding = document.querySelector('input[name="Encoding"]:checked').value;
 
 	copy = new FileCopy(copyName);
 
@@ -220,7 +223,7 @@ function parseFile() {
 		}
 		displayOutput();
 	}
-	reader.readAsText(csvFile.files[0], ENCODING);
+	reader.readAsText(csvFile.files[0], encoding);
 }
 
 /**
@@ -322,7 +325,7 @@ class FileCopy {
 		var parameters = lineAsString.split(parser);
 		if (parameters.length > 1) {
 			// the line is empty, let's do nothing
-			if (parameters[0] == "" && parameters[1] == "" && parameters[2] == "" && parameters[3] == ""){
+			if (parameters[0] == "" && parameters[1] == "" && parameters[2] == ""){
 				return;
 			}
 			var displayName = "";
@@ -867,7 +870,6 @@ class FileCopy {
 		// Let's trim our type
 		var cleanedType = type.replace(".", "").trim();
 		cleanedType = cleanedType.replace(/\s+/, " ");
-		console.log(cleanedType);
 
 		// if the type doesn't contain 'PIC' and needs it
 		if (regexType.test(cleanedType)) {
