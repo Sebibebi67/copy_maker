@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<html>
 <link href="src/CopyMaker.css" rel="stylesheet" type="text/css">
 
 <head>
@@ -62,10 +62,20 @@
 									<td>Fichier CSV de la copy</td>
 									<td>
 										<input type="file" id="CopyCSV" name="CopyCSV" accept=".csv" hidden />
-										<label class="Button" for="CopyCSV">Choisir un fichier</label>
+										<label class="button" for="CopyCSV">Choisir un fichier</label>
 										<span id="chosenFile">Pas de fichier choisi</span>
 									</td>
 								</tr>
+								<td>Encodage du fichier</td>
+								<td>
+									<div>
+										<input type="radio" id="encodingExcel" value="ISO-8859-3" name="Encoding" checked>
+										<label for="MessageNo">Excel</label>
+										
+										<input type="radio" id="encodingUTF8" value="UTF-8" name="Encoding">
+										<label for="MessageYes">UTF-8</label>
+									  </div>
+								</td>
 							</tbody>
 						</table>
 						<br />
@@ -87,14 +97,6 @@
 		</table>
 	</div>
 	<br />
-	<!-- <div>
-		<input type="file" id="CopyCSV" name="CopyCSV" accept=".csv" hidden />
-		<label for="CopyCSV">Choisir un fichier</label>
-		<span id="chosenFile">Pas de fichiers choisi</span>
-	</div> -->
-	<br />
-	<!-- <div class="output-invisible" id="output">
-	</div> -->
 </body>
 <script type="text/javascript" src="./src/main.js"></script>
 
