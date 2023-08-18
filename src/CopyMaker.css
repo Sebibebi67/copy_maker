@@ -42,23 +42,24 @@ h1 {
 	text-align: center;
 	border-radius: 25px;
 	font-size: large;
-	color: var(--main-color);
-	/* padding: 4px 4px; */
+	color : var(--main-color);
+	padding: 2px 2px;
 }
 
 .button:hover {
 	background-color: var(--main-color);
-	color: var(--main-color-bg);
+	color : var(--main-color-bg);
 }
 
 
 label.button {
 	background-color: var(--main-color-bg);
 	border: 1px solid var(--main-color);
-	font-size: large;
-	padding: 1px 1px;
 	text-align: center;
 	border-radius: 25px;
+	font-size: large;
+	color : var(--main-color);
+	padding: 2px 2px;
 }
 label.button:hover {
 	background-color: var(--main-color);
@@ -83,5 +84,3 @@ table td, table td * {
 	font-size: large;
 	border-spacing: 10px;
 }
-
-
